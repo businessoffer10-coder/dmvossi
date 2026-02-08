@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختبار DMV الأمريكي - American DMV Test</title>
+    <title>اختبار DMV الأمريكي مع الصور - DMV Test with Images</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -46,7 +46,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -62,7 +62,7 @@
         }
 
         .header-content {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
@@ -229,6 +229,19 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--success));
             transition: width 0.3s ease;
+        }
+
+        .question-image-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 2rem auto;
+            text-align: center;
+        }
+
+        .sign-svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
         .question-text {
@@ -411,6 +424,7 @@
             gap: 0.5rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .tab {
@@ -481,6 +495,10 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .question-image-container {
+                max-width: 200px;
+            }
         }
 
         .timer {
@@ -511,6 +529,78 @@
             color: var(--text-light);
             margin-bottom: 1rem;
         }
+
+        .sign-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .sign-item {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sign-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .sign-item svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 0.5rem;
+        }
+
+        .sign-item p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal svg {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .close-modal {
+            margin-top: 1rem;
+            padding: 0.5rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -536,13 +626,13 @@
         <!-- Welcome Screen -->
         <div class="card welcome-screen" id="welcome-screen">
             <h1>🎯 اختبار DMV الأمريكي</h1>
-            <p>American DMV Practice Test</p>
+            <p>American DMV Practice Test with Visual Signs</p>
             
             <div class="features">
                 <div class="feature">
-                    <div class="feature-icon">📚</div>
-                    <h3>500+ سؤال</h3>
-                    <p>أكثر من 500 سؤال مع ترجمة عربية دقيقة</p>
+                    <div class="feature-icon">🚦</div>
+                    <h3>إشارات مرورية مصورة</h3>
+                    <p>رؤية حقيقية للإشارات والرموز</p>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">🌍</div>
@@ -559,6 +649,11 @@
                     <h3>متجاوب</h3>
                     <p>يعمل على جميع الأجهزة</p>
                 </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem 0;">معرض الإشارات المرورية</h3>
+            <div class="sign-gallery" id="sign-gallery">
+                <!-- Signs will be inserted here -->
             </div>
 
             <div class="filter-tabs">
@@ -585,6 +680,8 @@
             </div>
 
             <div class="category-badge" id="category-badge">قواعد القيادة</div>
+
+            <div class="question-image-container" id="question-image"></div>
 
             <div class="question-text" id="question-arabic"></div>
             <div class="question-english" id="question-english"></div>
@@ -645,14 +742,133 @@
         </div>
     </div>
 
+    <!-- Modal for sign details -->
+    <div class="modal" id="sign-modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div id="modal-sign"></div>
+            <h3 id="modal-title"></h3>
+            <p id="modal-desc"></p>
+            <button class="close-modal" onclick="closeModal()">إغلاق</button>
+        </div>
+    </div>
+
     <script>
-        // Database of Questions
+        // SVG Sign Templates
+        const signs = {
+            stop: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="#dc2626" stroke="white" stroke-width="2"/>
+                <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="#dc2626"/>
+                <text x="50" y="58" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="Arial">STOP</text>
+            </svg>`,
+            
+            yield: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,10 90,80 10,80" fill="#facc15" stroke="black" stroke-width="2"/>
+                <text x="50" y="65" text-anchor="middle" fill="black" font-size="16" font-weight="bold" font-family="Arial">YIELD</text>
+            </svg>`,
+            
+            roundabout: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <circle cx="50" cy="50" r="45" fill="#facc15" stroke="black" stroke-width="2"/>
+                <path d="M 50 20 A 30 30 0 1 1 50 80 A 30 30 0 1 1 50 20" fill="none" stroke="black" stroke-width="3" marker-end="url(#arrow)"/>
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="black"/>
+                    </marker>
+                </defs>
+                <text x="50" y="50" text-anchor="middle" fill="black" font-size="12" font-weight="bold">Roundabout</text>
+            </svg>`,
+            
+            speed25: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <circle cx="50" cy="50" r="45" fill="white" stroke="black" stroke-width="8"/>
+                <text x="50" y="45" text-anchor="middle" fill="black" font-size="24" font-weight="bold">SPEED</text>
+                <text x="50" y="70" text-anchor="middle" fill="black" font-size="24" font-weight="bold">LIMIT</text>
+                <text x="50" y="90" text-anchor="middle" fill="black" font-size="16">25</text>
+            </svg>`,
+            
+            railroad: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <circle cx="50" cy="50" r="45" fill="white" stroke="black" stroke-width="2"/>
+                <text x="50" y="35" text-anchor="middle" fill="black" font-size="14" font-weight="bold">RAILROAD</text>
+                <text x="50" y="55" text-anchor="middle" fill="black" font-size="14" font-weight="bold">CROSSING</text>
+                <path d="M30 65 L70 65 M30 75 L70 75" stroke="black" stroke-width="4"/>
+                <path d="M35 65 L35 75 M45 65 L45 75 M55 65 L55 75 M65 65 L65 75" stroke="black" stroke-width="2"/>
+            </svg>`,
+            
+            school: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <rect x="10" y="20" width="80" height="60" fill="#facc15" stroke="black" stroke-width="2"/>
+                <path d="M30 60 L50 40 L70 60 Z" fill="black"/>
+                <rect x="45" y="60" width="10" height="15" fill="black"/>
+                <text x="50" y="85" text-anchor="middle" fill="black" font-size="10">SCHOOL ZONE</text>
+            </svg>`,
+            
+            hospital: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <rect x="10" y="10" width="80" height="80" fill="#2563eb" rx="10"/>
+                <text x="50" y="40" text-anchor="middle" fill="white" font-size="40" font-weight="bold">H</text>
+                <text x="50" y="70" text-anchor="middle" fill="white" font-size="12">HOSPITAL</text>
+            </svg>`,
+            
+            pedestrian: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,10 90,80 10,80" fill="#facc15" stroke="black" stroke-width="2"/>
+                <circle cx="50" cy="35" r="5" fill="black"/>
+                <path d="M50 40 L50 55 M50 45 L40 50 M50 45 L60 50 M50 55 L45 70 M50 55 L55 70" stroke="black" stroke-width="3" fill="none"/>
+            </svg>`,
+            
+            noEntry: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <circle cx="50" cy="50" r="45" fill="white" stroke="#dc2626" stroke-width="10"/>
+                <rect x="25" y="40" width="50" height="20" fill="#dc2626"/>
+                <text x="50" y="85" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="bold">DO NOT ENTER</text>
+            </svg>`,
+            
+            oneWay: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <rect x="10" y="20" width="80" height="60" fill="#2563eb" stroke="black" stroke-width="2"/>
+                <path d="M30 50 L60 50 L50 40 M60 50 L50 60" stroke="white" stroke-width="6" fill="none"/>
+                <text x="50" y="85" text-anchor="middle" fill="black" font-size="12" font-weight="bold">ONE WAY</text>
+            </svg>`,
+            
+            merge: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,10 90,80 10,80" fill="#facc15" stroke="black" stroke-width="2"/>
+                <path d="M30 70 L30 50 Q30 40 40 40 L50 40" stroke="black" stroke-width="3" fill="none"/>
+                <path d="M70 70 L70 30" stroke="black" stroke-width="3" fill="none"/>
+            </svg>`,
+            
+            curve: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,10 90,80 10,80" fill="#facc15" stroke="black" stroke-width="2"/>
+                <path d="M30 70 Q50 70 50 50 Q50 30 70 30" stroke="black" stroke-width="3" fill="none" marker-end="url(#arrowcurve)"/>
+                <defs>
+                    <marker id="arrowcurve" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="black"/>
+                    </marker>
+                </defs>
+            </svg>`,
+            
+            trafficLight: `<svg viewBox="0 0 60 140" class="sign-svg">
+                <rect x="10" y="10" width="40" height="120" fill="#333" rx="5"/>
+                <circle cx="30" cy="35" r="12" fill="#dc2626" stroke="black" stroke-width="2"/>
+                <circle cx="30" cy="70" r="12" fill="#facc15" stroke="black" stroke-width="2"/>
+                <circle cx="30" cy="105" r="12" fill="#16a34a" stroke="black" stroke-width="2"/>
+            </svg>`,
+            
+            bike: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <rect x="10" y="10" width="80" height="80" fill="white" stroke="#16a34a" stroke-width="4"/>
+                <circle cx="35" cy="60" r="8" stroke="black" stroke-width="2" fill="none"/>
+                <circle cx="65" cy="60" r="8" stroke="black" stroke-width="2" fill="none"/>
+                <path d="M35 60 L45 45 L60 45 L65 60 M45 45 L40 35 M45 45 L50 35" stroke="black" stroke-width="2" fill="none"/>
+                <circle cx="50" cy="35" r="3" fill="black"/>
+            </svg>`,
+            
+            slippery: `<svg viewBox="0 0 100 100" class="sign-svg">
+                <polygon points="50,10 90,80 10,80" fill="#facc15" stroke="black" stroke-width="2"/>
+                <path d="M30 70 Q40 60 50 70 Q60 80 70 70" stroke="black" stroke-width="3" fill="none"/>
+                <text x="50" y="50" text-anchor="middle" fill="black" font-size="10">SLIPPERY</text>
+            </svg>`
+        };
+
+        // Database of Questions with Images
         const questions = [
             {
                 id: 1,
                 category: "signs",
-                arabic: "ماذا يعني هذا اللون من إشارة المرور الضوئية؟",
-                english: "What does this color of traffic light mean?",
+                image: "trafficLight",
+                arabic: "ماذا يعني الضوء الأحمر في إشارة المرور؟",
+                english: "What does the red light in traffic signal mean?",
                 options: [
                     { arabic: "توقف تماماً", english: "Stop completely", correct: true },
                     { arabic: "استعد للتوقف", english: "Prepare to stop", correct: false },
@@ -660,191 +876,101 @@
                     { arabic: "أبطئ السرعة فقط", english: "Slow down only", correct: false }
                 ],
                 explanation: {
-                    arabic: "الضوء الأحمر يعني يجب عليك التوقف تماماً قبل خط التوقف أو عند تقاطع الطرق. لا يجوز الاستمرار في السير إلا بعدما يتحول إلى الأخضر.",
-                    english: "Red light means you must come to a complete stop before the stop line or intersection. You cannot proceed until it turns green."
+                    arabic: "الضوء الأحمر يعني يجب عليك التوقف تماماً قبل خط التوقف. لا يجوز الاستمرار إلا بعد الاخضرار.",
+                    english: "Red light means complete stop before the stop line. You cannot proceed until green."
                 }
             },
             {
                 id: 2,
-                category: "rules",
-                arabic: "ما هي السرعة القصوى المسموح بها في المناطق السكنية ما لم يُنص على خلاف ذلك؟",
-                english: "What is the maximum speed limit in residential areas unless otherwise posted?",
+                category: "signs",
+                image: "stop",
+                arabic: "ماذا تفعل عند رؤية هذه العلامة؟",
+                english: "What should you do when you see this sign?",
                 options: [
-                    { arabic: "25 ميل في الساعة", english: "25 mph", correct: true },
-                    { arabic: "35 ميل في الساعة", english: "35 mph", correct: false },
-                    { arabic: "45 ميل في الساعة", english: "45 mph", correct: false },
-                    { arabic: "55 ميل في الساعة", english: "55 mph", correct: false }
+                    { arabic: "أبطئ السرعة واستمر", english: "Slow down and proceed", correct: false },
+                    { arabic: "توقف تماماً ثم استمر إذا كان آمناً", english: "Come to complete stop then proceed if safe", correct: true },
+                    { arabic: "أعطِ الأولوية لليسار فقط", english: "Yield to left only", correct: false },
+                    { arabic: "توقف فقط إذا توجد مركبات", english: "Stop only if vehicles present", correct: false }
                 ],
                 explanation: {
-                    arabic: "في معظم الولايات، السرعة القصوى الافتراضية في المناطق السكنية هي 25 ميل في الساعة. ابحث عن لافتات السرعة للتأكد.",
-                    english: "In most states, the default maximum speed limit in residential areas is 25 mph. Always look for speed limit signs to confirm."
+                    arabic: "علامة التوقف المثمنة تتطلب توقفاً تاماً 100% والتأكد من خلو الطريق قبل المتابعة.",
+                    english: "The octagonal stop sign requires a complete 100% stop and checking for clear road before proceeding."
                 }
             },
             {
                 id: 3,
-                category: "safety",
-                arabic: "ما هو المسافة الآمنة التي يجب الحفاظ بها بينك وبين السيارة الأمامية؟",
-                english: "What is the safe following distance you should maintain from the vehicle in front of you?",
+                category: "signs",
+                image: "yield",
+                arabic: "ماذا تعني هذه العلامة المثلثة؟",
+                english: "What does this triangular sign mean?",
                 options: [
-                    { arabic: "ثانيتان على الأقل", english: "At least 2 seconds", correct: false },
-                    { arabic: "3-4 ثوانٍ", english: "3-4 seconds", correct: true },
-                    { arabic: "ثانية واحدة", english: "1 second", correct: false },
-                    { arabic: "5 أقدام", english: "5 feet", correct: false }
+                    { arabic: "توقف إلزامي", english: "Mandatory stop", correct: false },
+                    { arabic: "أعطِ الأولوية / دع الآخرين يمرون أولاً", english: "Yield / Let others go first", correct: true },
+                    { arabic: "طريق واحد", english: "One way", correct: false },
+                    { arabic: "لا دخول", english: "Do not enter", correct: false }
                 ],
                 explanation: {
-                    arabic: "استخدم قاعدة الأربع ثوانٍ في الظروف الجيدة، وزودها في الظروف السيئة. اختر علامة ثابتة وعد حتى تصل السيارة الأمامية إليها.",
-                    english: "Use the four-second rule in good conditions, and increase it in bad weather. Pick a fixed object and count until the vehicle ahead reaches it."
+                    arabic: "علامة إعطاء الأولوية (Yield) تعني يجب إعطاء الأولوية للمرور القادم، لكن إذا كان الطريق خالياً يمكن الاستمرار.",
+                    english: "Yield sign means give priority to oncoming traffic, but if clear, you may proceed without full stop."
                 }
             },
             {
                 id: 4,
                 category: "signs",
-                arabic: "ماذا يعني علامة المثمن (Stop)؟",
-                english: "What does the octagonal (Stop) sign mean?",
+                image: "speed25",
+                arabic: "ماذا تعني هذه اللافتة الدائرية؟",
+                english: "What does this circular sign mean?",
                 options: [
-                    { arabic: "أبطئ السرعة واستمر", english: "Slow down and proceed", correct: false },
-                    { arabic: "توقف تماماً ثم استمر إذا كان آمناً", english: "Come to a complete stop then proceed if safe", correct: true },
-                    { arabic: "أعطِ الأولوية للمركبات القادمة من اليسار فقط", english: "Yield to vehicles from left only", correct: false },
-                    { arabic: "توقف فقط إذا كانت هناك مركبات أخرى", english: "Stop only if other vehicles are present", correct: false }
+                    { arabic: "السرعة المثلى 25", english: "Recommended speed 25", correct: false },
+                    { arabic: "الحد الأقصى للسرعة 25 ميل", english: "Maximum speed limit 25 mph", correct: true },
+                    { arabic: "الحد الأدنى للسرعة 25", english: "Minimum speed 25", correct: false },
+                    { arabic: "مسافة 25 ميل للخروج", english: "25 miles to exit", correct: false }
                 ],
                 explanation: {
-                    arabic: "علامة التوقف المثمنة الشكل (ثمانية أضلاع) تعني يجب التوقف التام 100%، والتأكد من خلو الطريق قبل المتابعة.",
-                    english: "The octagonal stop sign means you must come to a complete 100% stop and ensure the way is clear before proceeding."
+                    arabic: "اللافتات البيضاء الدائرية تحدد السرعة القصوى المسموح بها قانونياً.",
+                    english: "White circular signs indicate the maximum legal speed limit."
                 }
             },
             {
                 id: 5,
-                category: "rules",
-                arabic: "متى يجب استخدام أضواء الطريق المنخفضة (Low Beam)؟",
-                english: "When should you use low beam headlights?",
+                category: "signs",
+                image: "railroad",
+                arabic: "ماذا تحذرك هذه اللافتة منه؟",
+                english: "What does this sign warn you about?",
                 options: [
-                    { arabic: "دائماً في الليل", english: "Always at night", correct: false },
-                    { arabic: "عندما تكون على بعد 500 قدم من مركبة قادمة", english: "When within 500 feet of an oncoming vehicle", correct: true },
-                    { arabic: "فقط في المناطق الريفية", english: "Only in rural areas", correct: false },
-                    { arabic: "عند القيادة في النهار", english: "When driving during daytime", correct: false }
+                    { arabic: "تقاطع سكة حديد قادم", english: "Railroad crossing ahead", correct: true },
+                    { arabic: "محطة قطار", english: "Train station", correct: false },
+                    { arabic: "طريق مغلق", english: "Road closed", correct: false },
+                    { arabic: "منطقة عمل", english: "Work zone", correct: false }
                 ],
                 explanation: {
-                    arabic: "يجب التحول للأضواء المنخفضة عندما تكون على بعد 500 قدم (حوالي 150 متر) من مركبة قادمة أو 300 قدم من مركبة أمامك لتجنب إبهار السائقين الآخرين.",
-                    english: "Dim to low beams when within 500 feet of oncoming traffic or 300 feet of a vehicle ahead to avoid blinding other drivers."
+                    arabic: "علامة X الصفراء تحذر من تقاطع سكة حديد قادم. ابحث عن الأضواء والبوابات.",
+                    english: "Yellow X sign warns of upcoming railroad crossing. Look for lights and gates."
                 }
             },
             {
                 id: 6,
-                category: "safety",
-                arabic: "ما هو الإجراء الصحيح عند الانزلاق على الجليد؟",
-                english: "What is the correct procedure when skidding on ice?",
+                category: "signs",
+                image: "school",
+                arabic: "ماذا تعني هذه اللافتة الصفراء؟",
+                english: "What does this yellow sign mean?",
                 options: [
-                    { arabic: "اضغط الفرامل بقوة", english: "Press brakes hard", correct: false },
-                    { arabic: "دير الاتجاه نحو الانزلاق ولا تفرمل", english: "Steer into the skid and don't brake", correct: true },
-                    { arabic: "اسحب فرامل اليد", english: "Pull the handbrake", correct: false },
-                    { arabic: "تسارع للخروج من الانزلاق", english: "Accelerate to get out of skid", correct: false }
+                    { arabic: "منطقة مدرسية - خفف السرعة", english: "School zone - reduce speed", correct: true },
+                    { arabic: "حديقة أطفال", english: "Children's park", correct: false },
+                    { arabic: "متحف", english: "Museum", correct: false },
+                    { arabic: "منطقة لعب", english: "Playground area", correct: false }
                 ],
                 explanation: {
-                    arabic: "عند الانزلاق، دير عجلة القيادة باتجاه الانزلاق (نحو الخلف) ورفع قدمك عن جميع الدواسات. الفرملة تفقدك السيطرة أكثر.",
-                    english: "When skidding, steer into the skid (toward the rear) and lift your foot off all pedals. Braking will cause you to lose more control."
+                    arabic: "لافتة المدرسة الصفراء تحذر من وجود أطفال. خفف السرعة وكن يقظاً.",
+                    english: "Yellow school sign warns of children presence. Reduce speed and be alert."
                 }
             },
             {
                 id: 7,
                 category: "signs",
-                arabic: "ماذا تعني علامة المثلث مقلوبة مع خط أحمر؟",
-                english: "What does an upside-down triangle with a red border mean?",
-                options: [
-                    { arabic: "توقف", english: "Stop", correct: false },
-                    { arabic: "أعطِ الأولوية / دع الآخرين يمرون", english: "Yield / Let others go first", correct: true },
-                    { arabic: "طريق واحد", english: "One way", correct: false },
-                    { arabic: "لا دخول", english: "Do not enter", correct: false }
-                ],
-                explanation: {
-                    arabic: "علامة إعطاء الأولوية (Yield) مثلثة مقلوبة. تعني يجب إعطاء الأولوية للمرور القادم، لكن إذا كان الطريق خالياً يمكن الاستمرار بدون التوقف التام.",
-                    english: "The yield sign is an upside-down triangle. It means give priority to oncoming traffic, but if clear, you may proceed without a full stop."
-                }
-            },
-            {
-                id: 8,
-                category: "rules",
-                arabic: "في دوار (Roundabout)، من له الأولوية؟",
-                english: "In a roundabout, who has the right of way?",
-                options: [
-                    { arabic: "المركبات الداخلة للدوار", english: "Vehicles entering the roundabout", correct: false },
-                    { arabic: "المركبات الموجودة داخل الدوار", english: "Vehicles already in the roundabout", correct: true },
-                    { arabic: "المركبات القادمة من اليمين دائماً", english: "Vehicles from the right always", correct: false },
-                    { arabic: "الشاحنات الكبيرة فقط", english: "Large trucks only", correct: false }
-                ],
-                explanation: {
-                    arabic: "في الدوارات، للمركبات الموجودة داخل الدائرة الأولوية دائماً. انتظر فجوة آمنة قبل الدخول.",
-                    english: "In roundabouts, vehicles already circulating have priority. Wait for a safe gap before entering."
-                }
-            },
-            {
-                id: 9,
-                category: "safety",
-                arabic: "ما هي نسبة الكحول في الدم القانونية للقيادة في معظم الولايات؟",
-                english: "What is the legal blood alcohol concentration (BAC) limit for driving in most states?",
-                options: [
-                    { arabic: "0.08%", english: "0.08%", correct: true },
-                    { arabic: "0.05%", english: "0.05%", correct: false },
-                    { arabic: "0.10%", english: "0.10%", correct: false },
-                    { arabic: "0.00%", english: "0.00%", correct: false }
-                ],
-                explanation: {
-                    arabic: "في معظم الولايات، الحد القانوني هو 0.08% للسائقين البالغين. للسائقين التجاريين 0.04% وتحت 21 سنة عادة 0.01% أو صفر.",
-                    english: "In most states, the legal limit is 0.08% for adult drivers. For commercial drivers it's 0.04%, and under 21 it's typically 0.01% or zero."
-                }
-            },
-            {
-                id: 10,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة الصفراء الماسية الشكل؟",
-                english: "What does a yellow diamond-shaped sign mean?",
-                options: [
-                    { arabic: "قانون إلزامي يجب اتباعه", english: "Mandatory law to follow", correct: false },
-                    { arabic: "تحذير من خطر محتمل", english: "Warning of potential hazard", correct: true },
-                    { arabic: "معلومات إرشادية", english: "Guidance information", correct: false },
-                    { arabic: "منطقة عمل", english: "Work zone", correct: false }
-                ],
-                explanation: {
-                    arabic: "اللافتات الماسية الصفراء هي لافتات تحذيرية. تحذرك من مخاطر محتملة مثل منحنيات الطريق، التقاطعات، أو المشاة.",
-                    english: "Yellow diamond signs are warning signs. They alert you to potential hazards like curves, intersections, or pedestrians."
-                }
-            },
-            {
-                id: 11,
-                category: "rules",
-                arabic: "عندما تقترب من حافلة مدرسية متوقفة مع إضاءة حمراء وامضة، يجب:",
-                english: "When approaching a stopped school bus with flashing red lights, you must:",
-                options: [
-                    { arabic: "التوقف حتى تطفئ الحافلة الأضواء", english: "Stop until the bus turns off the lights", correct: true },
-                    { arabic: "التوقف ثم المرور بحذر", english: "Stop then proceed with caution", correct: false },
-                    { arabic: "إبطاء السرعة والمرور", english: "Slow down and pass", correct: false },
-                    { arabic: "الإشارة وتجاوزها", english: "Signal and pass", correct: false }
-                ],
-                explanation: {
-                    arabic: "عندما تضيء الحافلة الأضواء الحمراء الوميضة، يجب التوقف تماماً من أي اتجاه حتى تطفئ الأضواء أو تتحرك الحافلة.",
-                    english: "When school bus flashes red lights, you must stop completely from either direction until lights are off or bus moves."
-                }
-            },
-            {
-                id: 12,
-                category: "safety",
-                arabic: "ما هو الإجراء الصحيح عندما يتعطل محرك سيارتك أثناء القيادة؟",
-                english: "What is the correct procedure when your engine fails while driving?",
-                options: [
-                    { arabic: "اضغط الفرامل بقوة فوراً", english: "Press brakes hard immediately", correct: false },
-                    { arabic: "حول إلى مسار السير واستخدم الفرامل بالتدريج", english: "Steer to safety lane and use brakes gradually", correct: true },
-                    { arabic: "أطفئ المحرك على الفور", english: "Turn off ignition immediately", correct: false },
-                    { arabic: "افتح الباب للتوقف", english: "Open door to stop", correct: false }
-                ],
-                explanation: {
-                    arabic: "عند تعطل المحرك، حافظ على الهدوء، حول السيارة إلى جانب الطريق الآمن، واستخدم الفرامل بحذر (ستصبح أثقل). لا تطفئ الإشعال لأنك تحتاج عجلة القيادة.",
-                    english: "If engine fails, stay calm, steer to safety, use brakes carefully (they'll be harder). Don't turn off ignition as you need steering control."
-                }
-            },
-            {
-                id: 13,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة الزرقاء مع حرف H؟",
-                english: "What does a blue sign with letter H mean?",
+                image: "hospital",
+                arabic: "ماذا تشير هذه اللافتة الزرقاء إليه؟",
+                english: "What does this blue sign indicate?",
                 options: [
                     { arabic: "فندق", english: "Hotel", correct: false },
                     { arabic: "مستشفى", english: "Hospital", correct: true },
@@ -852,200 +978,229 @@
                     { arabic: "مطار", english: "Airport", correct: false }
                 ],
                 explanation: {
-                    arabic: "اللافتات الزرقاء مع حرف H تشير إلى مستشفى قريب. اللافتات الزرقاء بشكل عام تقدم معلومات خدمية.",
-                    english: "Blue signs with H indicate nearby hospital. Blue signs generally provide service information."
+                    arabic: "اللافتات الزرقاء مع حرف H تشير إلى مستشفى قريب.",
+                    english: "Blue signs with H indicate nearby hospital."
+                }
+            },
+            {
+                id: 8,
+                category: "signs",
+                image: "pedestrian",
+                arabic: "ماذا تعني هذه اللافتة المثلثة؟",
+                english: "What does this triangular sign mean?",
+                options: [
+                    { arabic: "ممر مشاة", english: "Pedestrian crossing", correct: true },
+                    { arabic: "أشخاص يعملون", english: "People working", correct: false },
+                    { arabic: "منطقة مدرسية", english: "School zone", correct: false },
+                    { arabic: "طريق ضيق", english: "Narrow road", correct: false }
+                ],
+                explanation: {
+                    arabic: "تحذر من وجود ممر مشاة قادم. كن مستعداً للتوقف.",
+                    english: "Warns of upcoming pedestrian crossing. Be prepared to stop."
+                }
+            },
+            {
+                id: 9,
+                category: "signs",
+                image: "noEntry",
+                arabic: "ماذا تعني هذه اللافتة؟",
+                english: "What does this sign mean?",
+                options: [
+                    { arabic: "طريق مغلق", english: "Road closed", correct: false },
+                    { arabic: "لا دخول", english: "Do not enter", correct: true },
+                    { arabic: "توقف إلزامي", english: "Stop required", correct: false },
+                    { arabic: "اتجاه واحد", english: "One way", correct: false }
+                ],
+                explanation: {
+                    arabic: "علامة 'لا دخول' تعني أنك لا يجوز لك الدخول إلى هذا الطريق.",
+                    english: "Do not enter means you are prohibited from entering this road."
+                }
+            },
+            {
+                id: 10,
+                category: "signs",
+                image: "oneWay",
+                arabic: "ماذا تشير هذه اللافتة إليه؟",
+                english: "What does this sign indicate?",
+                options: [
+                    { arabic: "اتجاه السير إلزامي", english: "Mandatory direction", correct: false },
+                    { arabic: "طريق باتجاه واحد", english: "One way street", correct: true },
+                    { arabic: "انعطاف لليمين فقط", english: "Right turn only", correct: false },
+                    { arabic: "طريق خروج", english: "Exit route", correct: false }
+                ],
+                explanation: {
+                    arabic: "تشير إلى أن الطريق يذهب في اتجاه واحد فقط (باتجاه السهم).",
+                    english: "Indicates the street goes in one direction only (arrow direction)."
+                }
+            },
+            {
+                id: 11,
+                category: "signs",
+                image: "roundabout",
+                arabic: "ماذا تشير هذه اللافتة إليه؟",
+                english: "What does this sign indicate?",
+                options: [
+                    { arabic: "دوار (دوار مروري) قادم", english: "Roundabout ahead", correct: true },
+                    { arabic: "منعطف دائري", english: "Circular turn", correct: false },
+                    { arabic: "طريق دائري", english: "Circular road", correct: false },
+                    { arabic: "منطقة دوران", english: "Turning zone", correct: false }
+                ],
+                explanation: {
+                    arabic: "تحذر من وجود دوار مروري قادم. أعطِ الأولوية للمركبات داخل الدوار.",
+                    english: "Warns of upcoming roundabout. Yield to vehicles inside the circle."
+                }
+            },
+            {
+                id: 12,
+                category: "signs",
+                image: "merge",
+                arabic: "ماذا تعني هذه اللافتة؟",
+                english: "What does this sign mean?",
+                options: [
+                    { arabic: "تقاطع طرق", english: "Intersection", correct: false },
+                    { arabic: "دمج المرور", english: "Traffic merging", correct: true },
+                    { arabic: "طريق منحنٍ", english: "Curved road", correct: false },
+                    { arabic: "طريق ضيق", english: "Narrow road", correct: false }
+                ],
+                explanation: {
+                    arabic: "تحذر من دمج مرور من اليمين. كن مستعداً للسماح للسيارات بالدخول.",
+                    english: "Warns of traffic merging from right. Be prepared to let vehicles enter."
+                }
+            },
+            {
+                id: 13,
+                category: "signs",
+                image: "curve",
+                arabic: "ماذا تحذرك هذه اللافتة منه؟",
+                english: "What does this sign warn you about?",
+                options: [
+                    { arabic: "منحنى حاد في الطريق", english: "Sharp curve in road", correct: true },
+                    { arabic: "طريق مغلق", english: "Road closed", correct: false },
+                    { arabic: "منحدر خطير", english: "Dangerous slope", correct: false },
+                    { arabic: " جسر ضيق", english: "Narrow bridge", correct: false }
+                ],
+                explanation: {
+                    arabic: "تحذر من منحنى حاد في الطريق. خفف السرعة قبل المنحنى.",
+                    english: "Warns of sharp curve ahead. Reduce speed before the curve."
                 }
             },
             {
                 id: 14,
-                category: "rules",
-                arabic: "في تقاطع بإشارات مرور معطلة (لا تعمل)، من له الأولوية؟",
-                english: "At an intersection with broken traffic lights, who has right of way?",
+                category: "signs",
+                image: "bike",
+                arabic: "ماذا تعني هذه اللافتة؟",
+                english: "What does this sign mean?",
                 options: [
-                    { arabic: "السيارة الأكبر حجماً", english: "The larger vehicle", correct: false },
-                    { arabic: "السيارة الأسرع", english: "The faster vehicle", correct: false },
-                    { arabic: "السيارة التي وصلت أولاً", english: "First vehicle to arrive", correct: true },
-                    { arabic: "السيارة القادمة من اليسار دائماً", english: "Vehicle from left always", correct: false }
+                    { arabic: "ممر دراجات هوائية", english: "Bicycle lane", correct: true },
+                    { arabic: "ممنوع الدراجات", english: "No bicycles", correct: false },
+                    { arabic: "محل إصلاح دراجات", english: "Bicycle repair shop", correct: false },
+                    { arabic: "حديقة", english: "Park", correct: false }
                 ],
                 explanation: {
-                    arabic: "عندما تكون الإشارات معطلة، يصبح التقاطع كتقاطع بعلامات توقف. الأولوية للسيارة التي وصلت أولاً، ثم لليمين في حالة التعادل.",
-                    english: "When signals are out, treat as all-way stop. First to arrive goes first, then yield to right if tied."
+                    arabic: "تشير إلى وجود ممر مخصص للدراجات الهوائية أو وجود دراجات في المنطقة.",
+                    english: "Indicates dedicated bicycle lane or presence of bicycles in area."
                 }
             },
             {
                 id: 15,
-                category: "safety",
-                arabic: "ما هو أفضل مكان لوضع يديك على عجلة القيادة؟",
-                english: "What is the best hand position on the steering wheel?",
+                category: "signs",
+                image: "slippery",
+                arabic: "ماذا تحذرك هذه اللافتة منه؟",
+                english: "What does this sign warn you about?",
                 options: [
-                    { arabic: "الساعة 10 و 2", english: "10 and 2 o'clock", correct: false },
-                    { arabic: "الساعة 9 و 3", english: "9 and 3 o'clock", correct: true },
-                    { arabic: "الساعة 12 فقط", english: "12 o'clock only", correct: false },
-                    { arabic: "أسفل العجلة", english: "Bottom of wheel", correct: false }
+                    { arabic: "طريق زلق", english: "Slippery road", correct: true },
+                    { arabic: "منحدر", english: "Steep hill", correct: false },
+                    { arabic: "حفرة في الطريق", english: "Pothole", correct: false },
+                    { arabic: "طريق غير ممهد", english: "Unpaved road", correct: false }
                 ],
                 explanation: {
-                    arabic: "الوضعية 9 و 3 هي الأفضل الآن لأنها تسمح بأقصى سيطرة وتجنب إصابة الوجه بكيس الهواء عند الانتفاخ.",
-                    english: "9 and 3 position is now recommended for maximum control and to avoid airbag injury to face."
+                    arabic: "تحذر من طريق زلق محتمل. خفف السرعة وتجنب الفرملة المفاجئة.",
+                    english: "Warns of potentially slippery road. Reduce speed and avoid sudden braking."
                 }
             },
             {
                 id: 16,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة البيضاء المستطيلة مع سهم يشير لليمين؟",
-                english: "What does a white rectangular sign with arrow pointing right mean?",
+                category: "rules",
+                image: null,
+                arabic: "ما هي السرعة القصوى المسموح بها في المناطق السكنية عادةً؟",
+                english: "What is the usual maximum speed limit in residential areas?",
                 options: [
-                    { arabic: "التوجيه إلزامي", english: "Mandatory direction", correct: true },
-                    { arabic: "تحذير من منحنى", english: "Warning of curve", correct: false },
-                    { arabic: "اقتراح للطريق", english: "Suggested route", correct: false },
-                    { arabic: "نهاية الطريق", english: "End of road", correct: false }
+                    { arabic: "25 ميل في الساعة", english: "25 mph", correct: true },
+                    { arabic: "35 ميل في الساعة", english: "35 mph", correct: false },
+                    { arabic: "45 ميل في الساعة", english: "45 mph", correct: false },
+                    { arabic: "55 ميل في الساعة", english: "55 mph", correct: false }
                 ],
                 explanation: {
-                    arabic: "اللافتات البيضاء المستطيلة هي لافتات تنظيمية إلزامية. يجب اتباع الاتجاه المشار إليه.",
-                    english: "White rectangular signs are mandatory regulatory signs. You must follow the indicated direction."
+                    arabic: "في معظم الولايات، السرعة القصوى الافتراضية في المناطق السكنية هي 25 ميل في الساعة.",
+                    english: "In most states, default speed limit in residential areas is 25 mph."
                 }
             },
             {
                 id: 17,
-                category: "rules",
-                arabic: "متى يجب تشغيل أضواء السيارة؟",
-                english: "When must you turn on your vehicle lights?",
+                category: "safety",
+                image: null,
+                arabic: "ما هو المسافة الآمنة للتباعد بين السيارات؟",
+                english: "What is the safe following distance?",
                 options: [
-                    { arabic: "فقط في الليل", english: "Only at night", correct: false },
-                    { arabic: "من غروب الشمس حتى الشروق", english: "From sunset to sunrise", correct: true },
-                    { arabic: "فقط في الطقس العاصف", english: "Only in stormy weather", correct: false },
-                    { arabic: "عندما تريد", english: "Whenever you want", correct: false }
+                    { arabic: "ثانيتان على الأقل", english: "At least 2 seconds", correct: false },
+                    { arabic: "3-4 ثوانٍ", english: "3-4 seconds", correct: true },
+                    { arabic: "ثانية واحدة", english: "1 second", correct: false },
+                    { arabic: "5 أقدام", english: "5 feet", correct: false }
                 ],
                 explanation: {
-                    arabic: "القانون يوجب تشغيل الأضوية من غروب الشمس حتى الشروق، وكذلك في الظروف التي تقل فيها الرؤية عن 1000 قدم.",
-                    english: "Law requires lights from sunset to sunrise, and when visibility is reduced to less than 1000 feet."
+                    arabic: "استخدم قاعدة 3-4 ثوانٍ في الظروف الجيدة، وزودها في الظروف السيئة.",
+                    english: "Use 3-4 second rule in good conditions, increase in bad weather."
                 }
             },
             {
                 id: 18,
-                category: "safety",
-                arabic: "ما هو الإجراء الصحيح عندما يكون طريقك مغلقاً بسبب حادث؟",
-                english: "What is the correct procedure when your lane is blocked by an accident?",
+                category: "rules",
+                image: null,
+                arabic: "متى يجب تشغيل أضواء الطريق المنخفضة؟",
+                english: "When should you use low beam headlights?",
                 options: [
-                    { arabic: "توقف تماماً وانتظر", english: "Stop completely and wait", correct: false },
-                    { arabic: "انتقل إلى المسار الآمن عندما يكون آمناً", english: "Move to safe lane when clear", correct: true },
-                    { arabic: "عد للخلف على الطريق السريع", english: "Back up on the highway", correct: false },
-                    { arabic: "استخدم كتف الطريق للسير", english: "Use shoulder to drive", correct: false }
+                    { arabic: "دائماً في الليل", english: "Always at night", correct: false },
+                    { arabic: "عندما تكون على بعد 500 قدم من مركبة قادمة", english: "When within 500 feet of oncoming vehicle", correct: true },
+                    { arabic: "فقط في المناطق الريفية", english: "Only in rural areas", correct: false },
+                    { arabic: "عند القيادة في النهار", english: "When driving during daytime", correct: false }
                 ],
                 explanation: {
-                    arabic: "عندما يكون مسارك مغلقاً، انتقل إلى المسار الآخر بأمان بعد التأكد من خلوه. لا تتوقف فجأة ولا تسير بالاتجاه المعاكس.",
-                    english: "When lane is blocked, merge safely after checking. Don't stop suddenly or drive against traffic."
+                    arabic: "خفض الأضواء عندما تكون على بعد 500 قدم من مركبة قادمة لتجنب إبهار السائق.",
+                    english: "Dim lights when within 500 feet of oncoming traffic to avoid blinding."
                 }
             },
             {
                 id: 19,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة الخضراء الدائرية مع سهم أبيض؟",
-                english: "What does a green circular sign with white arrow mean?",
+                category: "safety",
+                image: null,
+                arabic: "ما هو الإجراء الصحيح عند الانزلاق على الجليد؟",
+                english: "What is correct procedure when skidding on ice?",
                 options: [
-                    { arabic: "اتجاه إلزامي", english: "Mandatory direction", correct: true },
-                    { arabic: "طريق خروج", english: "Exit route", correct: false },
-                    { arabic: "منطقة آمنة", english: "Safe zone", correct: false },
-                    { arabic: "موقف حافلات", english: "Bus stop", correct: false }
+                    { arabic: "اضغط الفرامل بقوة", english: "Press brakes hard", correct: false },
+                    { arabic: "دير الاتجاه نحو الانزلاق ولا تفرمل", english: "Steer into skid and don't brake", correct: true },
+                    { arabic: "اسحب فرامل اليد", english: "Pull handbrake", correct: false },
+                    { arabic: "تسارع للخروج من الانزلاق", english: "Accelerate to get out", correct: false }
                 ],
                 explanation: {
-                    arabic: "اللافتات الخضراء الدائرية تشير إلى اتجاهات إلزامية يجب اتباعها.",
-                    english: "Green circular signs indicate mandatory directions that must be followed."
+                    arabic: "دير نحو الانزلاق ورفع قدمك عن الدواسات. الفرملة تفقدك السيطرة أكثر.",
+                    english: "Steer into skid and lift foot off pedals. Braking causes more loss of control."
                 }
             },
             {
                 id: 20,
                 category: "rules",
-                arabic: "ما هي قاعدة المسارات في الطريق السريع متعدد المسارات؟",
-                english: "What is the lane rule on a multi-lane highway?",
+                image: null,
+                arabic: "في دوار (Roundabout)، من له الأولوية؟",
+                english: "In a roundabout, who has right of way?",
                 options: [
-                    { arabic: "المسار الأيمن للسير، الأيسر للتجاوز", english: "Right lane for driving, left for passing", correct: true },
-                    { arabic: "المسار الأيسر للسير البطيء", english: "Left lane for slow driving", correct: false },
-                    { arabic: "يمكن استخدام أي مسار", english: "Any lane can be used", correct: false },
-                    { arabic: "المسار الأوسط للشاحنات فقط", english: "Middle lane for trucks only", correct: false }
+                    { arabic: "المركبات الداخلة للدوار", english: "Vehicles entering", correct: false },
+                    { arabic: "المركبات الموجودة داخل الدوار", english: "Vehicles already in roundabout", correct: true },
+                    { arabic: "القادمة من اليمين دائماً", english: "Those from right always", correct: false },
+                    { arabic: "الشاحنات الكبيرة فقط", english: "Large trucks only", correct: false }
                 ],
                 explanation: {
-                    arabic: "في الطرق السريعة، يستخدم المسار الأيمن للسير العادي، والمسارات اليسرى للتجاوز. لا تتجاوز من اليمين.",
-                    english: "On highways, right lane is for normal driving, left lanes for passing. Don't pass on the right."
-                }
-            },
-            {
-                id: 21,
-                category: "safety",
-                arabic: "ما هو الإجراء الصحيح عندما تقترب من سيارة إسعاف مع إنذار صوتي؟",
-                english: "What to do when approaching an ambulance with sirens?",
-                options: [
-                    { arabic: "أسرع لتفاديها", english: "Speed up to avoid it", correct: false },
-                    { arabic: "توقف على الفور في مكانك", english: "Stop immediately in your place", correct: false },
-                    { arabic: "انزل لليمين وتوقف", english: "Pull to the right and stop", correct: true },
-                    { arabic: "استمر في سيرك", english: "Continue driving", correct: false }
-                ],
-                explanation: {
-                    arabic: "عند اقتراب مركبة طوارئ، انزل إلى أقصى اليمين بأمان وتوقف حتى تمر. لا تتوقف في التقاطع.",
-                    english: "When emergency vehicle approaches, safely pull to far right and stop until it passes. Don't stop in intersection."
-                }
-            },
-            {
-                id: 22,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة الصفراء مع علامة X سوداء؟",
-                english: "What does a yellow sign with black X mean?",
-                options: [
-                    { arabic: "تقاطع سكة حديد", english: "Railroad crossing", correct: true },
-                    { arabic: "تقاطع طرق", english: "Intersection", correct: false },
-                    { arabic: "منطقة خطرة", english: "Danger zone", correct: false },
-                    { arabic: "لا دخول", english: "No entry", correct: false }
-                ],
-                explanation: {
-                    arabic: "علامة X الصفراء تحذر من تقاطع سكة حديد قادم. ابحث عن أضواء وبوابات.",
-                    english: "Yellow X sign warns of upcoming railroad crossing. Look for lights and gates."
-                }
-            },
-            {
-                id: 23,
-                category: "rules",
-                arabic: "كم يجب أن تكون المسافة بينك وبين دراجة عند تجاوزها؟",
-                english: "How much distance should you give when passing a bicycle?",
-                options: [
-                    { arabic: "3 أقدام على الأقل", english: "At least 3 feet", correct: true },
-                    { arabic: "قدم واحدة", english: "One foot", correct: false },
-                    { arabic: "6 بوصات", english: "6 inches", correct: false },
-                    { arabic: "لا يوجد حد أدنى", english: "No minimum", correct: false }
-                ],
-                explanation: {
-                    arabic: "القانون يتطلب مسافة 3 أقدام ( yard) على الأقل عند تجاوز دراجة هوائية للسلامة.",
-                    english: "Law requires at least 3 feet clearance when passing a bicycle for safety."
-                }
-            },
-            {
-                id: 24,
-                category: "safety",
-                arabic: "ما هو أفضل وقت لفحص إطارات سيارتك؟",
-                english: "When is the best time to check your tire pressure?",
-                options: [
-                    { arabic: "بعد القيادة لمسافة طويلة", english: "After driving long distance", correct: false },
-                    { arabic: "عندما تكون الإطارات باردة", english: "When tires are cold", correct: true },
-                    { arabic: "في منتصف النهار فقط", english: "Midday only", correct: false },
-                    { arabic: "مرة في السنة", english: "Once a year", correct: false }
-                ],
-                explanation: {
-                    arabic: "افحص ضغط الإطارات عندما تكون باردة (لم تُقَد لثلاث ساعات على الأقل) للحصول على قراءة دقيقة.",
-                    english: "Check tire pressure when cold (not driven for 3+ hours) for accurate reading."
-                }
-            },
-            {
-                id: 25,
-                category: "signs",
-                arabic: "ماذا تعني اللافتة البرتقالية مع رجل يحمل مجرفة؟",
-                english: "What does an orange sign with man holding shovel mean?",
-                options: [
-                    { arabic: "منطقة عمل/إنشاءات", english: "Work/construction zone", correct: true },
-                    { arabic: "حديقة عامة", english: "Public park", correct: false },
-                    { arabic: "محطة بنزين", english: "Gas station", correct: false },
-                    { arabic: "مخيم تخييم", english: "Camping site", correct: false }
-                ],
-                explanation: {
-                    arabic: "اللافتات البرتقالية تشير إلى مناطق عمل أو إنشاءات. خفف السرعة وكن حذراً.",
-                    english: "Orange signs indicate work zones. Reduce speed and be cautious."
+                    arabic: "للمركبات داخل الدائرة الأولوية دائماً. انتظر فجوة آمنة قبل الدخول.",
+                    english: "Vehicles inside circle always have priority. Wait for safe gap before entering."
                 }
             }
         ];
@@ -1059,6 +1214,43 @@
         let timerInterval;
         let seconds = 0;
         let selectedCategory = 'all';
+
+        // Initialize sign gallery
+        function initSignGallery() {
+            const gallery = document.getElementById('sign-gallery');
+            const signData = [
+                { key: 'stop', name: 'توقف', desc: 'Stop' },
+                { key: 'yield', name: 'أعطِ الأولوية', desc: 'Yield' },
+                { key: 'speed25', name: 'حد سرعة 25', desc: 'Speed Limit 25' },
+                { key: 'railroad', name: 'تقاطع سكة حديد', desc: 'Railroad Crossing' },
+                { key: 'school', name: 'منطقة مدرسية', desc: 'School Zone' },
+                { key: 'hospital', name: 'مستشفى', desc: 'Hospital' }
+            ];
+
+            signData.forEach(sign => {
+                const item = document.createElement('div');
+                item.className = 'sign-item';
+                item.innerHTML = `
+                    ${signs[sign.key]}
+                    <p><strong>${sign.name}</strong><br>${sign.desc}</p>
+                `;
+                item.onclick = () => showSignModal(sign.key, sign.name, sign.desc);
+                gallery.appendChild(item);
+            });
+        }
+
+        function showSignModal(key, name, desc) {
+            document.getElementById('modal-sign').innerHTML = signs[key];
+            document.getElementById('modal-title').textContent = name;
+            document.getElementById('modal-desc').textContent = desc;
+            document.getElementById('sign-modal').style.display = 'flex';
+        }
+
+        function closeModal(event) {
+            if (!event || event.target.id === 'sign-modal') {
+                document.getElementById('sign-modal').style.display = 'none';
+            }
+        }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -1078,7 +1270,6 @@
             }
         }
 
-        // Load saved theme
         if (localStorage.getItem('theme') === 'dark') {
             toggleTheme();
         }
@@ -1092,12 +1283,11 @@
         }
 
         function startQuiz() {
-            // Filter questions
             if (selectedCategory === 'all') {
-                currentQuestions = [...questions].sort(() => Math.random() - 0.5).slice(0, 20);
+                currentQuestions = [...questions].sort(() => Math.random() - 0.5).slice(0, 15);
             } else {
                 const filtered = questions.filter(q => q.category === selectedCategory);
-                currentQuestions = filtered.sort(() => Math.random() - 0.5).slice(0, Math.min(20, filtered.length));
+                currentQuestions = filtered.sort(() => Math.random() - 0.5).slice(0, Math.min(15, filtered.length));
             }
 
             if (currentQuestions.length === 0) {
@@ -1129,7 +1319,7 @@
                 const secs = (seconds % 60).toString().padStart(2, '0');
                 document.getElementById('timer').textContent = `⏱️ ${mins}:${secs}`;
                 
-                if (seconds > 600) { // 10 minutes warning
+                if (seconds > 600) {
                     document.getElementById('timer').classList.add('warning');
                 }
             }, 1000);
@@ -1142,11 +1332,20 @@
             document.getElementById('progress-fill').style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
             
             const categoryNames = {
-                'signs': 'إشارات المرور',
-                'rules': 'قواعد القيادة',
-                'safety': 'السلامة'
+                'signs': '🚦 إشارات المرور',
+                'rules': '📋 قواعد القيادة',
+                'safety': '🛡️ السلامة'
             };
             document.getElementById('category-badge').textContent = categoryNames[question.category];
+            
+            // Show image if exists
+            const imageContainer = document.getElementById('question-image');
+            if (question.image && signs[question.image]) {
+                imageContainer.innerHTML = signs[question.image];
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
             
             document.getElementById('question-arabic').textContent = question.arabic;
             document.getElementById('question-english').textContent = question.english;
@@ -1178,7 +1377,7 @@
             const question = currentQuestions[currentQuestionIndex];
             
             if (options[0].classList.contains('selected') || options[0].classList.contains('correct')) {
-                return; // Already answered
+                return;
             }
             
             options[index].classList.add('selected');
@@ -1197,7 +1396,6 @@
             } else {
                 options[index].classList.add('wrong');
                 wrongAnswers++;
-                // Show correct answer
                 question.options.forEach((opt, idx) => {
                     if (opt.correct) {
                         options[idx].classList.add('correct');
@@ -1208,7 +1406,6 @@
             document.getElementById('correct-count').textContent = correctAnswers;
             document.getElementById('wrong-count').textContent = wrongAnswers;
             
-            // Show explanation
             document.getElementById('explanation-arabic').textContent = question.explanation.arabic;
             document.getElementById('explanation-english').textContent = question.explanation.english;
             document.getElementById('explanation').classList.add('show');
@@ -1285,8 +1482,15 @@
             wrongAnswers.forEach((ua, idx) => {
                 const reviewItem = document.createElement('div');
                 reviewItem.className = 'review-item';
+                
+                let imageHtml = '';
+                if (ua.question.image && signs[ua.question.image]) {
+                    imageHtml = `<div style="max-width: 150px; margin: 0 auto 1rem auto;">${signs[ua.question.image]}</div>`;
+                }
+                
                 reviewItem.innerHTML = `
                     <div class="review-status wrong">❌ خطأ</div>
+                    ${imageHtml}
                     <h4 style="margin-bottom: 0.5rem;">السؤال ${idx + 1}: ${ua.question.arabic}</h4>
                     <p style="color: var(--text-light); margin-bottom: 0.5rem;">${ua.question.english}</p>
                     <div style="background: var(--bg); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
@@ -1306,6 +1510,9 @@
             
             reviewContainer.scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Initialize
+        initSignGallery();
     </script>
 </body>
 </html>
