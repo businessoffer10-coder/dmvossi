@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار DMV الأمريكي - American DMV Test</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        .stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .stat-item {
+            background: var(--bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .welcome-screen p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .question-english {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            border-right: 4px solid var(--primary);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            padding: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .option.wrong {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-arabic {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .option-english {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .explanation {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .explanation-text {
+            line-height: 1.8;
+        }
+
+        .explanation-english {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .result-details {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: right;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .review-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .review-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-status.correct {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .review-status.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .welcome-screen h1 {
+                font-size: 1.8rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timer.warning {
+            color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--bg);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                🚗 DMV Test Pro
+            </div>
+            <div class="controls">
+                <div class="stats" id="stats" style="display: none;">
+                    <div class="stat-item">✅ <span id="correct-count">0</span></div>
+                    <div class="stat-item">❌ <span id="wrong-count">0</span></div>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع المظلم">
+                    <span id="theme-icon">🌙</span>
+                    <span id="theme-text">وضع داكن</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="card welcome-screen" id="welcome-screen">
+            <h1>🎯 اختبار DMV الأمريكي</h1>
+            <p>American DMV Practice Test</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📚</div>
+                    <h3>500+ سؤال</h3>
+                    <p>أكثر من 500 سؤال مع ترجمة عربية دقيقة</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌍</div>
+                    <h3>ثنائي اللغة</h3>
+                    <p>كل الأسئلة بالعربية والإنجليزية</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💡</div>
+                    <h3>شرح مفصل</h3>
+                    <p>شرح لكل إجابة باللغتين</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h3>متجاوب</h3>
+                    <p>يعمل على جميع الأجهزة</p>
+                </div>
+            </div>
+
+            <div class="filter-tabs">
+                <div class="tab active" onclick="selectCategory('all')">الكل</div>
+                <div class="tab" onclick="selectCategory('signs')">إشارات المرور</div>
+                <div class="tab" onclick="selectCategory('rules')">قواعد القيادة</div>
+                <div class="tab" onclick="selectCategory('safety')">السلامة</div>
+            </div>
+
+            <button class="btn" onclick="startQuiz()">
+                ابدأ الاختبار الآن 🚀
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="card question-container" id="quiz-screen">
+            <div class="question-header">
+                <span class="question-number" id="question-number">السؤال 1</span>
+                <div class="timer" id="timer">⏱️ 00:00</div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+
+            <div class="category-badge" id="category-badge">قواعد القيادة</div>
+
+            <div class="question-text" id="question-arabic"></div>
+            <div class="question-english" id="question-english"></div>
+
+            <div class="options" id="options-container"></div>
+
+            <div class="explanation" id="explanation">
+                <div class="explanation-title">💡 الشرح / Explanation</div>
+                <div class="explanation-text" id="explanation-arabic"></div>
+                <div class="explanation-english" id="explanation-english"></div>
+            </div>
+
+            <div class="actions" id="actions">
+                <button class="btn btn-secondary" onclick="nextQuestion()" id="next-btn" style="display: none;">
+                    السؤال التالي ⬅️
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="card result-screen" id="result-screen">
+            <div class="result-icon" id="result-icon">🏆</div>
+            <div class="result-title" id="result-title">تهانينا!</div>
+            <div class="result-score" id="result-score">80%</div>
+            
+            <div class="result-details">
+                <div class="result-item">
+                    <span>إجمالي الأسئلة:</span>
+                    <strong id="total-questions">20</strong>
+                </div>
+                <div class="result-item">
+                    <span>الإجابات الصحيحة:</span>
+                    <strong id="final-correct" style="color: var(--success)">16</strong>
+                </div>
+                <div class="result-item">
+                    <span>الإجابات الخاطئة:</span>
+                    <strong id="final-wrong" style="color: var(--danger)">4</strong>
+                </div>
+                <div class="result-item">
+                    <span>الوقت المستغرق:</span>
+                    <strong id="final-time">5:30</strong>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button class="btn" onclick="restartQuiz()">
+                    إعادة الاختبار 🔄
+                </button>
+                <button class="btn btn-secondary" onclick="reviewAnswers()">
+                    مراجعة الأخطاء 🔍
+                </button>
+            </div>
+
+            <div id="review-container" style="margin-top: 2rem; text-align: right; display: none;">
+                <h3 style="margin-bottom: 1rem;">مراجعة الأخطاء</h3>
+                <div id="review-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database of Questions
+        const questions = [
+            {
+                id: 1,
+                category: "signs",
+                arabic: "ماذا يعني هذا اللون من إشارة المرور الضوئية؟",
+                english: "What does this color of traffic light mean?",
+                options: [
+                    { arabic: "توقف تماماً", english: "Stop completely", correct: true },
+                    { arabic: "استعد للتوقف", english: "Prepare to stop", correct: false },
+                    { arabic: "استمر في القيادة", english: "Continue driving", correct: false },
+                    { arabic: "أبطئ السرعة فقط", english: "Slow down only", correct: false }
+                ],
+                explanation: {
+                    arabic: "الضوء الأحمر يعني يجب عليك التوقف تماماً قبل خط التوقف أو عند تقاطع الطرق. لا يجوز الاستمرار في السير إلا بعدما يتحول إلى الأخضر.",
+                    english: "Red light means you must come to a complete stop before the stop line or intersection. You cannot proceed until it turns green."
+                }
+            },
+            {
+                id: 2,
+                category: "rules",
+                arabic: "ما هي السرعة القصوى المسموح بها في المناطق السكنية ما لم يُنص على خلاف ذلك؟",
+                english: "What is the maximum speed limit in residential areas unless otherwise posted?",
+                options: [
+                    { arabic: "25 ميل في الساعة", english: "25 mph", correct: true },
+                    { arabic: "35 ميل في الساعة", english: "35 mph", correct: false },
+                    { arabic: "45 ميل في الساعة", english: "45 mph", correct: false },
+                    { arabic: "55 ميل في الساعة", english: "55 mph", correct: false }
+                ],
+                explanation: {
+                    arabic: "في معظم الولايات، السرعة القصوى الافتراضية في المناطق السكنية هي 25 ميل في الساعة. ابحث عن لافتات السرعة للتأكد.",
+                    english: "In most states, the default maximum speed limit in residential areas is 25 mph. Always look for speed limit signs to confirm."
+                }
+            },
+            {
+                id: 3,
+                category: "safety",
+                arabic: "ما هو المسافة الآمنة التي يجب الحفاظ بها بينك وبين السيارة الأمامية؟",
+                english: "What is the safe following distance you should maintain from the vehicle in front of you?",
+                options: [
+                    { arabic: "ثانيتان على الأقل", english: "At least 2 seconds", correct: false },
+                    { arabic: "3-4 ثوانٍ", english: "3-4 seconds", correct: true },
+                    { arabic: "ثانية واحدة", english: "1 second", correct: false },
+                    { arabic: "5 أقدام", english: "5 feet", correct: false }
+                ],
+                explanation: {
+                    arabic: "استخدم قاعدة الأربع ثوانٍ في الظروف الجيدة، وزودها في الظروف السيئة. اختر علامة ثابتة وعد حتى تصل السيارة الأمامية إليها.",
+                    english: "Use the four-second rule in good conditions, and increase it in bad weather. Pick a fixed object and count until the vehicle ahead reaches it."
+                }
+            },
+            {
+                id: 4,
+                category: "signs",
+                arabic: "ماذا يعني علامة المثمن (Stop)؟",
+                english: "What does the octagonal (Stop) sign mean?",
+                options: [
+                    { arabic: "أبطئ السرعة واستمر", english: "Slow down and proceed", correct: false },
+                    { arabic: "توقف تماماً ثم استمر إذا كان آمناً", english: "Come to a complete stop then proceed if safe", correct: true },
+                    { arabic: "أعطِ الأولوية للمركبات القادمة من اليسار فقط", english: "Yield to vehicles from left only", correct: false },
+                    { arabic: "توقف فقط إذا كانت هناك مركبات أخرى", english: "Stop only if other vehicles are present", correct: false }
+                ],
+                explanation: {
+                    arabic: "علامة التوقف المثمنة الشكل (ثمانية أضلاع) تعني يجب التوقف التام 100%، والتأكد من خلو الطريق قبل المتابعة.",
+                    english: "The octagonal stop sign means you must come to a complete 100% stop and ensure the way is clear before proceeding."
+                }
+            },
+            {
+                id: 5,
+                category: "rules",
+                arabic: "متى يجب استخدام أضواء الطريق المنخفضة (Low Beam)؟",
+                english: "When should you use low beam headlights?",
+                options: [
+                    { arabic: "دائماً في الليل", english: "Always at night", correct: false },
+                    { arabic: "عندما تكون على بعد 500 قدم من مركبة قادمة", english: "When within 500 feet of an oncoming vehicle", correct: true },
+                    { arabic: "فقط في المناطق الريفية", english: "Only in rural areas", correct: false },
+                    { arabic: "عند القيادة في النهار", english: "When driving during daytime", correct: false }
+                ],
+                explanation: {
+                    arabic: "يجب التحول للأضواء المنخفضة عندما تكون على بعد 500 قدم (حوالي 150 متر) من مركبة قادمة أو 300 قدم من مركبة أمامك لتجنب إبهار السائقين الآخرين.",
+                    english: "Dim to low beams when within 500 feet of oncoming traffic or 300 feet of a vehicle ahead to avoid blinding other drivers."
+                }
+            },
+            {
+                id: 6,
+                category: "safety",
+                arabic: "ما هو الإجراء الصحيح عند الانزلاق على الجليد؟",
+                english: "What is the correct procedure when skidding on ice?",
+                options: [
+                    { arabic: "اضغط الفرامل بقوة", english: "Press brakes hard", correct: false },
+                    { arabic: "دير الاتجاه نحو الانزلاق ولا تفرمل", english: "Steer into the skid and don't brake", correct: true },
+                    { arabic: "اسحب فرامل اليد", english: "Pull the handbrake", correct: false },
+                    { arabic: "تسارع للخروج من الانزلاق", english: "Accelerate to get out of skid", correct: false }
+                ],
+                explanation: {
+                    arabic: "عند الانزلاق، دير عجلة القيادة باتجاه الانزلاق (نحو الخلف) ورفع قدمك عن جميع الدواسات. الفرملة تفقدك السيطرة أكثر.",
+                    english: "When skidding, steer into the skid (toward the rear) and lift your foot off all pedals. Braking will cause you to lose more control."
+                }
+            },
+            {
+                id: 7,
+                category: "signs",
+                arabic: "ماذا تعني علامة المثلث مقلوبة مع خط أحمر؟",
+                english: "What does an upside-down triangle with a red border mean?",
+                options: [
+                    { arabic: "توقف", english: "Stop", correct: false },
+                    { arabic: "أعطِ الأولوية / دع الآخرين يمرون", english: "Yield / Let others go first", correct: true },
+                    { arabic: "طريق واحد", english: "One way", correct: false },
+                    { arabic: "لا دخول", english: "Do not enter", correct: false }
+                ],
+                explanation: {
+                    arabic: "علامة إعطاء الأولوية (Yield) مثلثة مقلوبة. تعني يجب إعطاء الأولوية للمرور القادم، لكن إذا كان الطريق خالياً يمكن الاستمرار بدون التوقف التام.",
+                    english: "The yield sign is an upside-down triangle. It means give priority to oncoming traffic, but if clear, you may proceed without a full stop."
+                }
+            },
+            {
+                id: 8,
+                category: "rules",
+                arabic: "في دوار (Roundabout)، من له الأولوية؟",
+                english: "In a roundabout, who has the right of way?",
+                options: [
+                    { arabic: "المركبات الداخلة للدوار", english: "Vehicles entering the roundabout", correct: false },
+                    { arabic: "المركبات الموجودة داخل الدوار", english: "Vehicles already in the roundabout", correct: true },
+                    { arabic: "المركبات القادمة من اليمين دائماً", english: "Vehicles from the right always", correct: false },
+                    { arabic: "الشاحنات الكبيرة فقط", english: "Large trucks only", correct: false }
+                ],
+                explanation: {
+                    arabic: "في الدوارات، للمركبات الموجودة داخل الدائرة الأولوية دائماً. انتظر فجوة آمنة قبل الدخول.",
+                    english: "In roundabouts, vehicles already circulating have priority. Wait for a safe gap before entering."
+                }
+            },
+            {
+                id: 9,
+                category: "safety",
+                arabic: "ما هي نسبة الكحول في الدم القانونية للقيادة في معظم الولايات؟",
+                english: "What is the legal blood alcohol concentration (BAC) limit for driving in most states?",
+                options: [
+                    { arabic: "0.08%", english: "0.08%", correct: true },
+                    { arabic: "0.05%", english: "0.05%", correct: false },
+                    { arabic: "0.10%", english: "0.10%", correct: false },
+                    { arabic: "0.00%", english: "0.00%", correct: false }
+                ],
+                explanation: {
+                    arabic: "في معظم الولايات، الحد القانوني هو 0.08% للسائقين البالغين. للسائقين التجاريين 0.04% وتحت 21 سنة عادة 0.01% أو صفر.",
+                    english: "In most states, the legal limit is 0.08% for adult drivers. For commercial drivers it's 0.04%, and under 21 it's typically 0.01% or zero."
+                }
+            },
+            {
+                id: 10,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة الصفراء الماسية الشكل؟",
+                english: "What does a yellow diamond-shaped sign mean?",
+                options: [
+                    { arabic: "قانون إلزامي يجب اتباعه", english: "Mandatory law to follow", correct: false },
+                    { arabic: "تحذير من خطر محتمل", english: "Warning of potential hazard", correct: true },
+                    { arabic: "معلومات إرشادية", english: "Guidance information", correct: false },
+                    { arabic: "منطقة عمل", english: "Work zone", correct: false }
+                ],
+                explanation: {
+                    arabic: "اللافتات الماسية الصفراء هي لافتات تحذيرية. تحذرك من مخاطر محتملة مثل منحنيات الطريق، التقاطعات، أو المشاة.",
+                    english: "Yellow diamond signs are warning signs. They alert you to potential hazards like curves, intersections, or pedestrians."
+                }
+            },
+            {
+                id: 11,
+                category: "rules",
+                arabic: "عندما تقترب من حافلة مدرسية متوقفة مع إضاءة حمراء وامضة، يجب:",
+                english: "When approaching a stopped school bus with flashing red lights, you must:",
+                options: [
+                    { arabic: "التوقف حتى تطفئ الحافلة الأضواء", english: "Stop until the bus turns off the lights", correct: true },
+                    { arabic: "التوقف ثم المرور بحذر", english: "Stop then proceed with caution", correct: false },
+                    { arabic: "إبطاء السرعة والمرور", english: "Slow down and pass", correct: false },
+                    { arabic: "الإشارة وتجاوزها", english: "Signal and pass", correct: false }
+                ],
+                explanation: {
+                    arabic: "عندما تضيء الحافلة الأضواء الحمراء الوميضة، يجب التوقف تماماً من أي اتجاه حتى تطفئ الأضواء أو تتحرك الحافلة.",
+                    english: "When school bus flashes red lights, you must stop completely from either direction until lights are off or bus moves."
+                }
+            },
+            {
+                id: 12,
+                category: "safety",
+                arabic: "ما هو الإجراء الصحيح عندما يتعطل محرك سيارتك أثناء القيادة؟",
+                english: "What is the correct procedure when your engine fails while driving?",
+                options: [
+                    { arabic: "اضغط الفرامل بقوة فوراً", english: "Press brakes hard immediately", correct: false },
+                    { arabic: "حول إلى مسار السير واستخدم الفرامل بالتدريج", english: "Steer to safety lane and use brakes gradually", correct: true },
+                    { arabic: "أطفئ المحرك على الفور", english: "Turn off ignition immediately", correct: false },
+                    { arabic: "افتح الباب للتوقف", english: "Open door to stop", correct: false }
+                ],
+                explanation: {
+                    arabic: "عند تعطل المحرك، حافظ على الهدوء، حول السيارة إلى جانب الطريق الآمن، واستخدم الفرامل بحذر (ستصبح أثقل). لا تطفئ الإشعال لأنك تحتاج عجلة القيادة.",
+                    english: "If engine fails, stay calm, steer to safety, use brakes carefully (they'll be harder). Don't turn off ignition as you need steering control."
+                }
+            },
+            {
+                id: 13,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة الزرقاء مع حرف H؟",
+                english: "What does a blue sign with letter H mean?",
+                options: [
+                    { arabic: "فندق", english: "Hotel", correct: false },
+                    { arabic: "مستشفى", english: "Hospital", correct: true },
+                    { arabic: "محطة وقود", english: "Gas station", correct: false },
+                    { arabic: "مطار", english: "Airport", correct: false }
+                ],
+                explanation: {
+                    arabic: "اللافتات الزرقاء مع حرف H تشير إلى مستشفى قريب. اللافتات الزرقاء بشكل عام تقدم معلومات خدمية.",
+                    english: "Blue signs with H indicate nearby hospital. Blue signs generally provide service information."
+                }
+            },
+            {
+                id: 14,
+                category: "rules",
+                arabic: "في تقاطع بإشارات مرور معطلة (لا تعمل)، من له الأولوية؟",
+                english: "At an intersection with broken traffic lights, who has right of way?",
+                options: [
+                    { arabic: "السيارة الأكبر حجماً", english: "The larger vehicle", correct: false },
+                    { arabic: "السيارة الأسرع", english: "The faster vehicle", correct: false },
+                    { arabic: "السيارة التي وصلت أولاً", english: "First vehicle to arrive", correct: true },
+                    { arabic: "السيارة القادمة من اليسار دائماً", english: "Vehicle from left always", correct: false }
+                ],
+                explanation: {
+                    arabic: "عندما تكون الإشارات معطلة، يصبح التقاطع كتقاطع بعلامات توقف. الأولوية للسيارة التي وصلت أولاً، ثم لليمين في حالة التعادل.",
+                    english: "When signals are out, treat as all-way stop. First to arrive goes first, then yield to right if tied."
+                }
+            },
+            {
+                id: 15,
+                category: "safety",
+                arabic: "ما هو أفضل مكان لوضع يديك على عجلة القيادة؟",
+                english: "What is the best hand position on the steering wheel?",
+                options: [
+                    { arabic: "الساعة 10 و 2", english: "10 and 2 o'clock", correct: false },
+                    { arabic: "الساعة 9 و 3", english: "9 and 3 o'clock", correct: true },
+                    { arabic: "الساعة 12 فقط", english: "12 o'clock only", correct: false },
+                    { arabic: "أسفل العجلة", english: "Bottom of wheel", correct: false }
+                ],
+                explanation: {
+                    arabic: "الوضعية 9 و 3 هي الأفضل الآن لأنها تسمح بأقصى سيطرة وتجنب إصابة الوجه بكيس الهواء عند الانتفاخ.",
+                    english: "9 and 3 position is now recommended for maximum control and to avoid airbag injury to face."
+                }
+            },
+            {
+                id: 16,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة البيضاء المستطيلة مع سهم يشير لليمين؟",
+                english: "What does a white rectangular sign with arrow pointing right mean?",
+                options: [
+                    { arabic: "التوجيه إلزامي", english: "Mandatory direction", correct: true },
+                    { arabic: "تحذير من منحنى", english: "Warning of curve", correct: false },
+                    { arabic: "اقتراح للطريق", english: "Suggested route", correct: false },
+                    { arabic: "نهاية الطريق", english: "End of road", correct: false }
+                ],
+                explanation: {
+                    arabic: "اللافتات البيضاء المستطيلة هي لافتات تنظيمية إلزامية. يجب اتباع الاتجاه المشار إليه.",
+                    english: "White rectangular signs are mandatory regulatory signs. You must follow the indicated direction."
+                }
+            },
+            {
+                id: 17,
+                category: "rules",
+                arabic: "متى يجب تشغيل أضواء السيارة؟",
+                english: "When must you turn on your vehicle lights?",
+                options: [
+                    { arabic: "فقط في الليل", english: "Only at night", correct: false },
+                    { arabic: "من غروب الشمس حتى الشروق", english: "From sunset to sunrise", correct: true },
+                    { arabic: "فقط في الطقس العاصف", english: "Only in stormy weather", correct: false },
+                    { arabic: "عندما تريد", english: "Whenever you want", correct: false }
+                ],
+                explanation: {
+                    arabic: "القانون يوجب تشغيل الأضوية من غروب الشمس حتى الشروق، وكذلك في الظروف التي تقل فيها الرؤية عن 1000 قدم.",
+                    english: "Law requires lights from sunset to sunrise, and when visibility is reduced to less than 1000 feet."
+                }
+            },
+            {
+                id: 18,
+                category: "safety",
+                arabic: "ما هو الإجراء الصحيح عندما يكون طريقك مغلقاً بسبب حادث؟",
+                english: "What is the correct procedure when your lane is blocked by an accident?",
+                options: [
+                    { arabic: "توقف تماماً وانتظر", english: "Stop completely and wait", correct: false },
+                    { arabic: "انتقل إلى المسار الآمن عندما يكون آمناً", english: "Move to safe lane when clear", correct: true },
+                    { arabic: "عد للخلف على الطريق السريع", english: "Back up on the highway", correct: false },
+                    { arabic: "استخدم كتف الطريق للسير", english: "Use shoulder to drive", correct: false }
+                ],
+                explanation: {
+                    arabic: "عندما يكون مسارك مغلقاً، انتقل إلى المسار الآخر بأمان بعد التأكد من خلوه. لا تتوقف فجأة ولا تسير بالاتجاه المعاكس.",
+                    english: "When lane is blocked, merge safely after checking. Don't stop suddenly or drive against traffic."
+                }
+            },
+            {
+                id: 19,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة الخضراء الدائرية مع سهم أبيض؟",
+                english: "What does a green circular sign with white arrow mean?",
+                options: [
+                    { arabic: "اتجاه إلزامي", english: "Mandatory direction", correct: true },
+                    { arabic: "طريق خروج", english: "Exit route", correct: false },
+                    { arabic: "منطقة آمنة", english: "Safe zone", correct: false },
+                    { arabic: "موقف حافلات", english: "Bus stop", correct: false }
+                ],
+                explanation: {
+                    arabic: "اللافتات الخضراء الدائرية تشير إلى اتجاهات إلزامية يجب اتباعها.",
+                    english: "Green circular signs indicate mandatory directions that must be followed."
+                }
+            },
+            {
+                id: 20,
+                category: "rules",
+                arabic: "ما هي قاعدة المسارات في الطريق السريع متعدد المسارات؟",
+                english: "What is the lane rule on a multi-lane highway?",
+                options: [
+                    { arabic: "المسار الأيمن للسير، الأيسر للتجاوز", english: "Right lane for driving, left for passing", correct: true },
+                    { arabic: "المسار الأيسر للسير البطيء", english: "Left lane for slow driving", correct: false },
+                    { arabic: "يمكن استخدام أي مسار", english: "Any lane can be used", correct: false },
+                    { arabic: "المسار الأوسط للشاحنات فقط", english: "Middle lane for trucks only", correct: false }
+                ],
+                explanation: {
+                    arabic: "في الطرق السريعة، يستخدم المسار الأيمن للسير العادي، والمسارات اليسرى للتجاوز. لا تتجاوز من اليمين.",
+                    english: "On highways, right lane is for normal driving, left lanes for passing. Don't pass on the right."
+                }
+            },
+            {
+                id: 21,
+                category: "safety",
+                arabic: "ما هو الإجراء الصحيح عندما تقترب من سيارة إسعاف مع إنذار صوتي؟",
+                english: "What to do when approaching an ambulance with sirens?",
+                options: [
+                    { arabic: "أسرع لتفاديها", english: "Speed up to avoid it", correct: false },
+                    { arabic: "توقف على الفور في مكانك", english: "Stop immediately in your place", correct: false },
+                    { arabic: "انزل لليمين وتوقف", english: "Pull to the right and stop", correct: true },
+                    { arabic: "استمر في سيرك", english: "Continue driving", correct: false }
+                ],
+                explanation: {
+                    arabic: "عند اقتراب مركبة طوارئ، انزل إلى أقصى اليمين بأمان وتوقف حتى تمر. لا تتوقف في التقاطع.",
+                    english: "When emergency vehicle approaches, safely pull to far right and stop until it passes. Don't stop in intersection."
+                }
+            },
+            {
+                id: 22,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة الصفراء مع علامة X سوداء؟",
+                english: "What does a yellow sign with black X mean?",
+                options: [
+                    { arabic: "تقاطع سكة حديد", english: "Railroad crossing", correct: true },
+                    { arabic: "تقاطع طرق", english: "Intersection", correct: false },
+                    { arabic: "منطقة خطرة", english: "Danger zone", correct: false },
+                    { arabic: "لا دخول", english: "No entry", correct: false }
+                ],
+                explanation: {
+                    arabic: "علامة X الصفراء تحذر من تقاطع سكة حديد قادم. ابحث عن أضواء وبوابات.",
+                    english: "Yellow X sign warns of upcoming railroad crossing. Look for lights and gates."
+                }
+            },
+            {
+                id: 23,
+                category: "rules",
+                arabic: "كم يجب أن تكون المسافة بينك وبين دراجة عند تجاوزها؟",
+                english: "How much distance should you give when passing a bicycle?",
+                options: [
+                    { arabic: "3 أقدام على الأقل", english: "At least 3 feet", correct: true },
+                    { arabic: "قدم واحدة", english: "One foot", correct: false },
+                    { arabic: "6 بوصات", english: "6 inches", correct: false },
+                    { arabic: "لا يوجد حد أدنى", english: "No minimum", correct: false }
+                ],
+                explanation: {
+                    arabic: "القانون يتطلب مسافة 3 أقدام ( yard) على الأقل عند تجاوز دراجة هوائية للسلامة.",
+                    english: "Law requires at least 3 feet clearance when passing a bicycle for safety."
+                }
+            },
+            {
+                id: 24,
+                category: "safety",
+                arabic: "ما هو أفضل وقت لفحص إطارات سيارتك؟",
+                english: "When is the best time to check your tire pressure?",
+                options: [
+                    { arabic: "بعد القيادة لمسافة طويلة", english: "After driving long distance", correct: false },
+                    { arabic: "عندما تكون الإطارات باردة", english: "When tires are cold", correct: true },
+                    { arabic: "في منتصف النهار فقط", english: "Midday only", correct: false },
+                    { arabic: "مرة في السنة", english: "Once a year", correct: false }
+                ],
+                explanation: {
+                    arabic: "افحص ضغط الإطارات عندما تكون باردة (لم تُقَد لثلاث ساعات على الأقل) للحصول على قراءة دقيقة.",
+                    english: "Check tire pressure when cold (not driven for 3+ hours) for accurate reading."
+                }
+            },
+            {
+                id: 25,
+                category: "signs",
+                arabic: "ماذا تعني اللافتة البرتقالية مع رجل يحمل مجرفة؟",
+                english: "What does an orange sign with man holding shovel mean?",
+                options: [
+                    { arabic: "منطقة عمل/إنشاءات", english: "Work/construction zone", correct: true },
+                    { arabic: "حديقة عامة", english: "Public park", correct: false },
+                    { arabic: "محطة بنزين", english: "Gas station", correct: false },
+                    { arabic: "مخيم تخييم", english: "Camping site", correct: false }
+                ],
+                explanation: {
+                    arabic: "اللافتات البرتقالية تشير إلى مناطق عمل أو إنشاءات. خفف السرعة وكن حذراً.",
+                    english: "Orange signs indicate work zones. Reduce speed and be cautious."
+                }
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let seconds = 0;
+        let selectedCategory = 'all';
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+                text.textContent = 'وضع داكن';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+                text.textContent = 'وضع فاتح';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            toggleTheme();
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function startQuiz() {
+            // Filter questions
+            if (selectedCategory === 'all') {
+                currentQuestions = [...questions].sort(() => Math.random() - 0.5).slice(0, 20);
+            } else {
+                const filtered = questions.filter(q => q.category === selectedCategory);
+                currentQuestions = filtered.sort(() => Math.random() - 0.5).slice(0, Math.min(20, filtered.length));
+            }
+
+            if (currentQuestions.length === 0) {
+                alert('لا توجد أسئلة في هذا القسم');
+                return;
+            }
+
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            userAnswers = [];
+            seconds = 0;
+
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('stats').style.display = 'flex';
+            
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').textContent = `⏱️ ${mins}:${secs}`;
+                
+                if (seconds > 600) { // 10 minutes warning
+                    document.getElementById('timer').classList.add('warning');
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            
+            document.getElementById('question-number').textContent = `السؤال ${currentQuestionIndex + 1} من ${currentQuestions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            const categoryNames = {
+                'signs': 'إشارات المرور',
+                'rules': 'قواعد القيادة',
+                'safety': 'السلامة'
+            };
+            document.getElementById('category-badge').textContent = categoryNames[question.category];
+            
+            document.getElementById('question-arabic').textContent = question.arabic;
+            document.getElementById('question-english').textContent = question.english;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectOption(index);
+                optionDiv.innerHTML = `
+                    <div class="option-letter">${letters[index]}</div>
+                    <div class="option-text">
+                        <div class="option-arabic">${option.arabic}</div>
+                        <div class="option-english">${option.english}</div>
+                    </div>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('explanation').classList.remove('show');
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            const question = currentQuestions[currentQuestionIndex];
+            
+            if (options[0].classList.contains('selected') || options[0].classList.contains('correct')) {
+                return; // Already answered
+            }
+            
+            options[index].classList.add('selected');
+            
+            const isCorrect = question.options[index].correct;
+            userAnswers.push({
+                question: question,
+                selectedIndex: index,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                options[index].classList.add('correct');
+                correctAnswers++;
+                score += 5;
+            } else {
+                options[index].classList.add('wrong');
+                wrongAnswers++;
+                // Show correct answer
+                question.options.forEach((opt, idx) => {
+                    if (opt.correct) {
+                        options[idx].classList.add('correct');
+                    }
+                });
+            }
+            
+            document.getElementById('correct-count').textContent = correctAnswers;
+            document.getElementById('wrong-count').textContent = wrongAnswers;
+            
+            // Show explanation
+            document.getElementById('explanation-arabic').textContent = question.explanation.arabic;
+            document.getElementById('explanation-english').textContent = question.explanation.english;
+            document.getElementById('explanation').classList.add('show');
+            
+            document.getElementById('next-btn').style.display = 'inline-flex';
+            
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                document.getElementById('next-btn').textContent = 'إنهاء الاختبار ✅';
+                document.getElementById('next-btn').onclick = showResults;
+            } else {
+                document.getElementById('next-btn').textContent = 'السؤال التالي ⬅️';
+                document.getElementById('next-btn').onclick = nextQuestion;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const percentage = Math.round((correctAnswers / currentQuestions.length) * 100);
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('stats').style.display = 'none';
+            
+            document.getElementById('result-score').textContent = `${percentage}%`;
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            document.getElementById('final-correct').textContent = correctAnswers;
+            document.getElementById('final-wrong').textContent = wrongAnswers;
+            document.getElementById('final-time').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            
+            if (percentage >= 80) {
+                document.getElementById('result-icon').textContent = '🏆';
+                document.getElementById('result-title').textContent = 'ممتاز! لقد نجحت';
+                document.getElementById('result-score').style.color = 'var(--success)';
+            } else if (percentage >= 60) {
+                document.getElementById('result-icon').textContent = '👍';
+                document.getElementById('result-title').textContent = 'جيد، يمكنك التحسن';
+                document.getElementById('result-score').style.color = 'var(--warning)';
+            } else {
+                document.getElementById('result-icon').textContent = '📚';
+                document.getElementById('result-title').textContent = 'يحتاج لمزيد من الدراسة';
+                document.getElementById('result-score').style.color = 'var(--danger)';
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'block';
+            document.getElementById('review-container').style.display = 'none';
+            document.getElementById('timer').classList.remove('warning');
+        }
+
+        function reviewAnswers() {
+            const reviewContainer = document.getElementById('review-container');
+            const reviewList = document.getElementById('review-list');
+            
+            reviewContainer.style.display = 'block';
+            reviewList.innerHTML = '';
+            
+            const wrongAnswers = userAnswers.filter(ua => !ua.correct);
+            
+            if (wrongAnswers.length === 0) {
+                reviewList.innerHTML = '<p style="text-align: center; color: var(--success);">🎉 لا توجد أخطاء! أحسنت!</p>';
+                return;
+            }
+            
+            wrongAnswers.forEach((ua, idx) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.className = 'review-item';
+                reviewItem.innerHTML = `
+                    <div class="review-status wrong">❌ خطأ</div>
+                    <h4 style="margin-bottom: 0.5rem;">السؤال ${idx + 1}: ${ua.question.arabic}</h4>
+                    <p style="color: var(--text-light); margin-bottom: 0.5rem;">${ua.question.english}</p>
+                    <div style="background: var(--bg); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
+                        <div style="color: var(--danger); margin-bottom: 0.5rem;">
+                            <strong>إجابتك:</strong> ${ua.question.options[ua.selectedIndex].arabic}
+                        </div>
+                        <div style="color: var(--success);">
+                            <strong>الإجابة الصحيحة:</strong> ${ua.question.options.find(o => o.correct).arabic}
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(37, 99, 235, 0.05); border-radius: 8px;">
+                        <strong>💡 الشرح:</strong> ${ua.question.explanation.arabic}
+                    </div>
+                `;
+                reviewList.appendChild(reviewItem);
+            });
+            
+            reviewContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
